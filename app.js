@@ -125,7 +125,7 @@ var Cell = function() {
   }
 
   function renderListing(listing) {
-    return "<img src='" + listing._links.photo.href + "'>";
+    return "<a href='" + listing._links.web.href + "' target='_blank'><img src='" + listing._links.photo.href + "'></a>";
   }
 };
 
