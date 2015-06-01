@@ -1,6 +1,6 @@
 var App = function() {
   var self = this;
-  var polling_rate = 3000;
+  var polling_rate = 10000;
   var num_width = 9;
   var num_height = 5;
   var num_listings = num_width * num_height;
@@ -25,8 +25,7 @@ var App = function() {
       self.last_listing_title = listings[0].title;
 
       for(var i=0; i<num_listings; i++) {
-        self.cells[i].queueListing(listings[i]);
-        self.cells[i].flip();
+        self.cells[i].queueListingAndShow(listings[i]);
       }
     });
   }
@@ -56,8 +55,7 @@ var App = function() {
     console.log(new_listings);
 
     for (var i=0; i<new_listings.length; i++) {
-      selected_cells[i].queueListing(new_listings[i]);
-      selected_cells[i].delayFlip(1000);
+      selected_cells[i].queueListingAndShow(new_listings[i]);
     }
   }
 
@@ -100,22 +98,24 @@ var Cell = function() {
     self.next_listing = listing;
   }
 
+  self.queueListingAndShow = function(listing) {
+    self.queueListing(listing);
+    self.flip();
+  }
+
   self.flip = function() {
     var new_face_selector = self.front ? '.cell-back' : '.cell-front';
     var $new_face = self.$el.find(new_face_selector);
-    $new_face.html(renderListing(self.next_listing));
 
     self.active_listing = self.next_listing;
     self.next_listing = null;
 
-    self.front = !self.front;
-    self.$el.toggleClass('flipped');
-  }
+    $new_face.html(renderListing(self.active_listing));
 
-  self.delayFlip = function(ms) {
-    setTimeout(function() {
-      self.flip();
-    }, ms);
+    $new_face.find('img').on('load', function() {
+      self.front = !self.front;
+      self.$el.toggleClass('flipped');
+    });
   }
 
   self.render = function() {
