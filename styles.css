@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   background: #333;
+  overflow: hidden;
 }
 
 .cell {
@@ -10,6 +11,13 @@ body {
   float: left;
   position: relative;
   perspective: 600px;
+  transition: all 0.2s;
+}
+
+.cell:hover {
+  transform: scale(1.1);
+  z-index: 100;
+  box-shadow: 0 0 20px 5px rgba(0,0,0,0.5);
 }
 
 img {
@@ -40,6 +48,7 @@ img {
   transform-style: preserve-3d;
   backface-visibility: hidden;
 }
+
 .cell.flipped .cell-front {
   z-index: 900;
   transform: rotate3d(0, 1, 0, 180deg);
