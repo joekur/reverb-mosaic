@@ -125,7 +125,11 @@ var Cell = function() {
   }
 
   function renderListing(listing) {
-    return "<a href='" + listing._links.web.href + "' target='_blank'><img src='" + listing._links.photo.href + "'></a>";
+    return "<a href='" + listing._links.web.href + "' target='_blank'><img src='" + listing._links.photo.href + "'>" + renderInfo(listing) + "</a>";
+  }
+
+  function renderInfo(listing) {
+    return "<div class='price'>$" + listing.price.amount + "</div>" + "<div class='title'>" + listing.title + "</div>";
   }
 };
 

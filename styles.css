@@ -3,6 +3,7 @@ body {
   padding: 0;
   background: #333;
   overflow: hidden;
+  font-family: Helvetica;
 }
 
 .cell {
@@ -57,4 +58,35 @@ img {
 .cell.flipped .cell-back {
   z-index: 1000;
   transform: rotate3d(0, 0, 0, 0deg);
+}
+
+.price, .title {
+  position: absolute;
+  text-decoration: none;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: rgba(0,0,0,0.5);
+}
+
+.cell:hover .price, .cell:hover .title {
+  opacity: 1;
+}
+
+.price {
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: right;
+  padding: 15px;
+}
+
+.title {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
