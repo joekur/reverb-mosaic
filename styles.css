@@ -4,6 +4,7 @@ body {
   background: #333;
   overflow: hidden;
   font-family: Helvetica;
+  font-size: 1.4vmin;
 }
 
 .cell {
@@ -74,19 +75,19 @@ img {
   opacity: 1;
 }
 
-.price {
-  top: 0;
+.price, .title {
+  padding: 1em;
   left: 0;
   right: 0;
+}
+
+.price {
+  top: 0;
   text-align: right;
-  padding: 15px;
 }
 
 .title {
   bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
