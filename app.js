@@ -5,6 +5,10 @@ var App = function() {
   var num_height = 5;
   var num_listings = num_width * num_height;
   var listings_url = 'https://reverb.com/api/listings.json?per_page=' + num_listings;
+  var query_string = window.location.search.slice(1);
+  if (query_string.length) {
+    listings_url += "&" + query_string;
+  }
   var $body = $('body');
 
   self.last_listing_title = null;
