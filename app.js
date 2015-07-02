@@ -1,19 +1,24 @@
 var App = function() {
   var self = this;
   var polling_rate = 10000;
-  var num_width = 9;
-  var num_height = 5;
-  var num_listings = num_width * num_height;
-  var listings_url = 'https://reverb.com/api/listings.json?per_page=' + num_listings;
+  var num_width;
+  var num_height;
+  var num_listings;
+  var listings_url;
   var query_string = window.location.search.slice(1);
-  if (query_string.length) {
-    listings_url += "&" + query_string;
-  }
   var $body = $('body');
 
-  self.last_listing_title = null;
+  self.last_listing = null;
 
   self.init = function() {
+    num_width = calcNumWidth();
+    num_height = calcNumHeight();
+    num_listings = num_width * num_height;
+    listings_url = 'https://reverb.com/api/listings.json?per_page=' + num_listings;
+    if (query_string.length) {
+      listings_url += "&" + query_string;
+    }
+
     initCells();
     renderCells();
     setTimeout(updateListings, polling_rate);
@@ -26,7 +31,7 @@ var App = function() {
     }
 
     fetchListings(function(listings) {
-      self.last_listing_title = listings[0].title;
+      self.last_listing = listings[0];
 
       for(var i=0; i<num_listings; i++) {
         self.cells[i].queueListingAndShow(listings[i]);
@@ -36,7 +41,9 @@ var App = function() {
 
   function renderCells() {
     for(var i=0; i<self.cells.length; i++) {
-      $body.append(self.cells[i].render());
+      var $cell = self.cells[i].render();
+      $cell.css({width: (100/num_width)+"%", height: (100/num_height)+"%"});
+      $body.append($cell);
     }
   }
 
@@ -55,7 +62,7 @@ var App = function() {
   function parseNewListings(listings) {
     var new_listings = filterNewListings(listings);
     var selected_cells = selectCellsToUpdate(new_listings.length)
-    self.last_listing_title = listings[0].title;
+    self.last_listing = listings[0];
     console.log(new_listings);
 
     for (var i=0; i<new_listings.length; i++) {
@@ -69,7 +76,7 @@ var App = function() {
 
     for(var i=0; i<listings.length; i++) {
       var listing = listings[i];
-      if (listing.title == self.last_listing_title) { break; }
+      if (listing._links.self.href == self.last_listing._links.self.href) { break; }
       new_listings.push(listing);
     }
 
@@ -87,6 +94,26 @@ var App = function() {
         taken[x] = --len;
     }
     return result;
+  }
+
+  function calcNumWidth() {
+    if ($body.width() > 1500) {
+      return 9;
+    } else if ($body.width() > 1000) {
+      return 7;
+    } else {
+      return 5;
+    }
+  }
+
+  function calcNumHeight() {
+    if ($body.width() > 1500) {
+      return 5;
+    } else if ($body.width() > 1000) {
+      return 4;
+    } else {
+      return 3;
+    }
   }
 };
 
@@ -133,7 +160,12 @@ var Cell = function() {
   }
 
   function renderInfo(listing) {
-    return "<div class='price'>$" + listing.price.amount + "</div>" + "<div class='title'>" + listing.title + "</div>";
+    var html = "<div class='price'>$" + listing.price.amount.replace(/\..*/, "") + "</div>" +
+               "<div class='title'>" +
+                 "<div class='make'>" + listing.make + "</div>" +
+                 "<div class='model'>" + listing.model + "</div>" +
+               "</div>";
+    return html;
   }
 };
 
