@@ -8,7 +8,7 @@ var App = function() {
   var query_string = window.location.search.slice(1);
   var $body = $('body');
 
-  self.last_listing_title = null;
+  self.last_listing = null;
 
   self.init = function() {
     num_width = calcNumWidth();
@@ -31,7 +31,7 @@ var App = function() {
     }
 
     fetchListings(function(listings) {
-      self.last_listing_title = listings[0].title;
+      self.last_listing = listings[0];
 
       for(var i=0; i<num_listings; i++) {
         self.cells[i].queueListingAndShow(listings[i]);
@@ -62,7 +62,7 @@ var App = function() {
   function parseNewListings(listings) {
     var new_listings = filterNewListings(listings);
     var selected_cells = selectCellsToUpdate(new_listings.length)
-    self.last_listing_title = listings[0].title;
+    self.last_listing = listings[0];
     console.log(new_listings);
 
     for (var i=0; i<new_listings.length; i++) {
@@ -76,7 +76,7 @@ var App = function() {
 
     for(var i=0; i<listings.length; i++) {
       var listing = listings[i];
-      if (listing.title == self.last_listing_title) { break; }
+      if (listing._links.self.href == self.last_listing._links.self.href) { break; }
       new_listings.push(listing);
     }
 
