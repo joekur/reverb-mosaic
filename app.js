@@ -1,19 +1,24 @@
 var App = function() {
   var self = this;
   var polling_rate = 10000;
-  var num_width = 9;
-  var num_height = 5;
-  var num_listings = num_width * num_height;
-  var listings_url = 'https://reverb.com/api/listings.json?per_page=' + num_listings;
+  var num_width;
+  var num_height;
+  var num_listings;
+  var listings_url;
   var query_string = window.location.search.slice(1);
-  if (query_string.length) {
-    listings_url += "&" + query_string;
-  }
   var $body = $('body');
 
   self.last_listing_title = null;
 
   self.init = function() {
+    num_width = calcNumWidth();
+    num_height = calcNumHeight();
+    num_listings = num_width * num_height;
+    listings_url = 'https://reverb.com/api/listings.json?per_page=' + num_listings;
+    if (query_string.length) {
+      listings_url += "&" + query_string;
+    }
+
     initCells();
     renderCells();
     setTimeout(updateListings, polling_rate);
@@ -36,7 +41,9 @@ var App = function() {
 
   function renderCells() {
     for(var i=0; i<self.cells.length; i++) {
-      $body.append(self.cells[i].render());
+      var $cell = self.cells[i].render();
+      $cell.css({width: (100/num_width)+"%", height: (100/num_height)+"%"});
+      $body.append($cell);
     }
   }
 
@@ -88,6 +95,26 @@ var App = function() {
     }
     return result;
   }
+
+  function calcNumWidth() {
+    if ($body.width() > 1500) {
+      return 9;
+    } else if ($body.width() > 1000) {
+      return 7;
+    } else {
+      return 5;
+    }
+  }
+
+  function calcNumHeight() {
+    if ($body.width() > 1500) {
+      return 5;
+    } else if ($body.width() > 1000) {
+      return 4;
+    } else {
+      return 3;
+    }
+  }
 };
 
 var Cell = function() {
@@ -133,7 +160,12 @@ var Cell = function() {
   }
 
   function renderInfo(listing) {
-    return "<div class='price'>$" + listing.price.amount + "</div>" + "<div class='title'>" + listing.title + "</div>";
+    var html = "<div class='price'>$" + listing.price.amount.replace(/\..*/, "") + "</div>" +
+               "<div class='title'>" +
+                 "<div class='make'>" + listing.make + "</div>" +
+                 "<div class='model'>" + listing.model + "</div>" +
+               "</div>";
+    return html;
   }
 };
 
